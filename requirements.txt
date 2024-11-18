@@ -1,7 +1,7 @@
-streamlit>=1.28.0
+gdown
+streamlit
 numpy>=1.24.0
 tensorflow>=2.14.0
 Pillow>=10.0.0
 openai>=1.3.0
 pathlib>=1.0.1
-gdown
