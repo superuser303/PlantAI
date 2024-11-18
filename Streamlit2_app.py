@@ -1,5 +1,4 @@
 import streamlit as st
-import gdown
 import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
