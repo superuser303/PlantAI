@@ -461,13 +461,13 @@ def download_model_from_drive():
     except Exception as e:
         st.error(f"Error during model download: {e}")
     # Verify the file's size after download
-    if os.path.exists(model_path) and os.path.getsize(model_path) >= expected_file_size:
+    if os.path.exists(MODEL_PATH) and os.path.getsize(MODEL_PATH) >= expected_file_size:
         st.success("Model downloaded and verified successfully!")
         return True
     else:
         st.error("Model download failed or the file is corrupted. Please retry.")
-        if os.path.exists(model_path):
-            os.remove(model_path)  # Remove the corrupted file
+        if os.path.exists(MODEL_PATH):
+            os.remove(MODEL_PATH)  # Remove the corrupted file
         return False
         
     # Load the model with caching
