@@ -434,41 +434,34 @@ def load_css():
     """, unsafe_allow_html=True)
     
 # Define the function to download the model from Google Drive
+MODEL_PATH = "Medicinal_Plant.h5"  # Global variable for model path
+
 def download_model_from_drive():
-    file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual file ID
-    download_url = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"
-    output_file = "Medicinal_Plant.h5"
-    expected_file_size = 178 * 1024 * 1024  # 178 MB in bytes
+    """
+    Downloads the model file from Google Drive if it doesn't already exist locally.
+    Verifies the file size to ensure a complete download.
+    Returns:
+        bool: True if the model is downloaded and verified successfully, False otherwise.
+    """
+    drive_url = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Google Drive direct download link
+    expected_file_size = 178 * 1024 * 1024  # Expected size in bytes (178 MB)
 
-    # Check if the model file exists and has the expected size
-    if not os.path.exists(output_file) or os.path.getsize(output_file) < expected_file_size:
-        st.write("Downloading model from Google Drive...")
-        gdown.download(download_url, output_file, quiet=False)
-        
-    # Verify the file's size after download
-    if os.path.exists(model_path) and os.path.getsize(model_path) >= expected_file_size:
-        st.success("Model downloaded and verified successfully!")
-        return True
-    else:
-        st.error("Model download failed or the file is corrupted. Please retry.")
-        if os.path.exists(model_path):
-            os.remove(model_path)  # Remove the corrupted file
-        return False
-# Load the model with caching
-@st.cache_resource
-def load_prediction_model():
+    # Check if the model file already exists
+    if os.path.exists(MODEL_PATH):
+        if os.path.getsize(MODEL_PATH) >= expected_file_size:
+            st.info("Model already exists and is complete. Skipping download.")
+            return True
+        else:
+            st.warning("Model file exists but seems incomplete. Re-downloading...")
+
+    # Attempt to download the file
+    st.info("Downloading the model from Google Drive...")
     try:
-         # Download the model file if not available or incomplete
-        if not download_model_from_drive():
-            return None
-
-        # Load the model
-        model = load_model("Medicinal_Plant.h5")
-        return model
+        gdown.download(drive_url, MODEL_PATH, quiet=False)
     except Exception as e:
-        st.error(f"Error loading model: {str(e)}")
-        return None
-    
+        st.error(f"Error during model download: {e}")
+        return False
+        
 def add_enhanced_chatbot():
     # Initialize session state for chat visibility
     if 'chat_visible' not in st.session_state:
