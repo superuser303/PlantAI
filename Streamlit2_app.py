@@ -1,19 +1,15 @@
 import streamlit as st
 import numpy as np
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
-import openai
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
 from PIL import Image
 import base64
 from pathlib import Path
 import time
+from openai import OpenAI
 
-openai.api_key = "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"
-# Load pre-trained DialoGPT model and tokenizer
-tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
-model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
+# Initialize OpenAI client
+client = OpenAI(api_key="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")
 
 # Initialize session state
 if 'model' not in st.session_state:
@@ -313,6 +309,126 @@ def load_css():
             font-size: 0.8rem;
             font-weight: 500;
         }
+        
+        .chat-container {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 1rem 0;
+        overflow: hidden;
+    }
+    
+    .chat-header {
+        background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+        padding: 1rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+    
+    .chat-header:hover {
+        background: linear-gradient(135deg, #065f46 0%, #05875f 100%);
+    }
+    
+    .chat-body {
+        padding: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .chat-input {
+        background: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem;
+    }
+    
+    /* Enhanced Results Section */
+    .result-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+    .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+    .confidence-meter {
+        background: #e5e7eb;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+    .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #059669 0%, #064e3b 100%);
+        transition: width 0.5s ease;
+    }
+    
+    .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+    .property-card {
+        background: #f3f4f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: transform 0.2s ease;
+    }
+    
+    .property-card:hover {
+        transform: translateY(-2px);
+    }
+    
+    .expandable-section {
+        margin-top: 1rem;
+    }
+    
+    .expandable-header {
+        background: #f3f4f6;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .expandable-content {
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0 0 0.5rem 0.5rem;
+        margin-top: 0.25rem;
+    }
+    
+    /* Loading Animation */
+    .loading-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f4f6;
+        border-top: 4px solid #059669;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    </style>
         </style>
     """, unsafe_allow_html=True)
     
@@ -325,97 +441,57 @@ def load_prediction_model():
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         return None
+    
+def add_enhanced_chatbot():
+    # Initialize session state for chat visibility
+    if 'chat_visible' not in st.session_state:
+        st.session_state.chat_visible = False
 
-
-def add_chatbot():
-    # Header for the chatbot
     st.markdown("""
-        <div style="text-align: center; margin-bottom: 20px;">
-            <h2 style="color: #064e3b; font-weight: 700;">💬 AI Chatbot</h2>
-            <p style="color: #374151; font-size: 1.1rem;">Choose an AI model and start chatting!</p>
-        </div>
+        <div class="chat-container">
+            <div class="chat-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none';">
+                <div>
+                    <h3 style="margin: 0;">💬 AI Plant Assistant</h3>
+                    <small>Ask questions about medicinal plants</small>
+                </div>
+                <span>▼</span>
+            </div>
+            <div class="chat-body" id="chat-body" style="display: none;">
     """, unsafe_allow_html=True)
 
-    # Model selection option
-    model_option = st.selectbox("Choose AI Model:", ["Free AI Model", "ChatGPT"])
-
-    # Initialize chat history in session state if not exists
-    if "chat_history" not in st.session_state:
-        st.session_state.chat_history = []
-
-    # Initialize chat history ids for DialoGPT if not exists
-    if "chat_history_ids" not in st.session_state:
-        st.session_state.chat_history_ids = None
-
-    # User input
+    # Chat interface
     user_input = st.text_input(
-        "Type your question here...",
-        placeholder="Ask me anything...",
-        help="Enter your query and click Send",
-        label_visibility="collapsed",
+        "",
+        placeholder="Ask about plant properties, uses, or preparation methods...",
+        key="chat_input",
+        label_visibility="collapsed"
     )
 
-    if st.button("Send", use_container_width=True):
+    if st.button("Send", key="chat_send", use_container_width=True):
         if user_input:
-            if model_option == "Free AI Model":
-                try:
-                    # Use DialoGPT
-                    new_user_input_ids = tokenizer.encode(user_input + tokenizer.eos_token, return_tensors='pt')
+            try:
+                messages = []
+                for speaker, message in st.session_state.chat_history:
+                    role = "user" if speaker == "You" else "assistant"
+                    messages.append({"role": role, "content": message})
+                
+                messages.append({"role": "user", "content": user_input})
+                
+                completion = client.chat.completions.create(
+                    model="gpt-3.5-turbo",
+                    messages=messages,
+                    max_tokens=500,
+                    temperature=0.7
+                )
+                response = completion.choices[0].message.content
 
-                    # Concatenate with chat history if it exists
-                    if st.session_state.chat_history_ids is not None:
-                        bot_input_ids = torch.cat([st.session_state.chat_history_ids, new_user_input_ids], dim=-1)
-                    else:
-                        bot_input_ids = new_user_input_ids
+                st.session_state.chat_history.append(("You", user_input))
+                st.session_state.chat_history.append(("Bot", response))
 
-                    # Generate response
-                    chat_history_ids = model.generate(
-                        bot_input_ids,
-                        max_length=1000,
-                        pad_token_id=tokenizer.eos_token_id,
-                        no_repeat_ngram_size=3,
-                        do_sample=True,
-                        top_k=100,
-                        top_p=0.7,
-                        temperature=0.8
-                    )
+            except Exception as e:
+                st.error(f"Error: {str(e)}")
 
-                    # Update chat history ids
-                    st.session_state.chat_history_ids = chat_history_ids
-
-                    # Decode response
-                    response = tokenizer.decode(
-                        chat_history_ids[:, bot_input_ids.shape[-1]:][0],
-                        skip_special_tokens=True
-                    )
-
-                except Exception as e:
-                    response = f"An error occurred: {str(e)}"
-                    st.error("Error in processing request")
-
-            elif model_option == "ChatGPT":
-                try:
-                    # Check if API key is set
-                    if not openai.api_key or openai.api_key == "YOUR_OPENAI_API_KEY":
-                        st.error("Please set your OpenAI API key in the code")
-                        return
-
-                    # Use OpenAI's ChatGPT
-                    completion = openai.ChatCompletion.create(
-                        model="gpt-3.5-turbo",
-                        messages=[{"role": "user", "content": user_input}]
-                    )
-                    response = completion.choices[0].message['content']
-
-                except Exception as e:
-                    response = f"An error occurred: {str(e)}"
-                    st.error("Error in processing request")
-
-            # Append to chat history
-            st.session_state.chat_history.append(("You", user_input))
-            st.session_state.chat_history.append(("Bot", response))
-
-    # Display chat history with styling
+    # Display chat history
     for speaker, message in st.session_state.chat_history:
         if speaker == "You":
             st.markdown(
@@ -431,6 +507,71 @@ def add_chatbot():
                 <strong>{speaker}:</strong> {message}</div>""",
                 unsafe_allow_html=True
             )
+
+    st.markdown("</div></div>", unsafe_allow_html=True)
+
+def display_enhanced_results(predicted_class, confidence):
+    st.markdown("""
+        <div class="result-card">
+            <div class="result-header">
+                <h2 style="color: #064e3b; margin: 0;">🌿 Plant Identification Results</h2>
+                <span style="color: #059669; font-weight: 600;">Analysis Complete</span>
+            </div>
+            
+            <div style="margin: 1.5rem 0;">
+                <h3 style="color: #064e3b; margin: 0;">Identified Plant:</h3>
+                <h1 style="color: #059669; margin: 0.5rem 0;">{}</h1>
+                <div class="confidence-meter">
+                    <div class="confidence-fill" style="width: {}%;"></div>
+                </div>
+                <p style="color: #374151; margin: 0.5rem 0;">Confidence Score: {}%</p>
+            </div>
+
+            <div class="property-grid">
+                <div class="property-card">
+                    <h4 style="color: #064e3b; margin: 0;">Scientific Classification</h4>
+                    <p style="color: #374151;">{}</p>
+                </div>
+                <div class="property-card">
+                    <h4 style="color: #064e3b; margin: 0;">Common Names</h4>
+                    <p style="color: #374151;">{}</p>
+                </div>
+                <div class="property-card">
+                    <h4 style="color: #064e3b; margin: 0;">Native Region</h4>
+                    <p style="color: #374151;">{}</p>
+                </div>
+            </div>
+
+            <div class="expandable-section">
+                <div class="expandable-header">
+                    <h4 style="color: #064e3b; margin: 0;">📝 Preparation Methods</h4>
+                    <span>▼</span>
+                </div>
+                <div class="expandable-content">
+                    {}
+                </div>
+            </div>
+
+            <div class="expandable-section">
+                <div class="expandable-header">
+                    <h4 style="color: #064e3b; margin: 0;">💊 Medicinal Properties</h4>
+                    <span>▼</span>
+                </div>
+                <div class="expandable-content">
+                    {}
+                </div>
+            </div>
+        </div>
+    """.format(
+        predicted_class,
+        confidence,
+        round(confidence, 1),
+        get_scientific_classification(predicted_class),
+        get_common_names(predicted_class),
+        get_native_region(predicted_class),
+        methods_of_preparation.get(predicted_class, "Information not available"),
+        format_medicinal_uses(predicted_class)
+    ), unsafe_allow_html=True)
 
 def predict_class(img):
     try:
@@ -456,6 +597,38 @@ def predict_class(img):
         st.error(f"Error during prediction: {str(e)}")
         st.session_state['loading'] = False
         return None, None
+def format_medicinal_uses(plant_name):
+    uses = use_of_medicine.get(plant_name, "No information available")
+    uses = uses.strip("{}").split(",")
+    formatted_uses = "<ul>" + "".join([f"<li>{use.strip()}</li>" for use in uses]) + "</ul>"
+    return formatted_uses
+
+def get_scientific_classification(plant_name):
+    # Add a dictionary for scientific names (you can expand this)
+    scientific_names = {
+        "Aloevera": "Aloe barbadensis miller",
+        "Tulasi": "Ocimum tenuiflorum",
+        # Add more scientific names
+    }
+    return scientific_names.get(plant_name, "Scientific name not available")
+
+def get_common_names(plant_name):
+    # Add a dictionary for common names (you can expand this)
+    common_names = {
+        "Aloevera": "Aloe Vera, Burn Plant, Medicinal Aloe",
+        "Tulasi": "Holy Basil, Sacred Basil, Thai Basil",
+        # Add more common names
+    }
+    return common_names.get(plant_name, "Common names not available")
+
+def get_native_region(plant_name):
+    # Add a dictionary for native regions (you can expand this)
+    native_regions = {
+        "Aloevera": "Northern Africa",
+        "Tulasi": "Indian Subcontinent",
+        # Add more native regions
+    }
+    return native_regions.get(plant_name, "Native region information not available")
 
 def main():
     # Load CSS
@@ -641,7 +814,11 @@ def main():
                     <p style="color: #6b7280;">Upload an image to see the analysis</p>
                 </div>
             """, unsafe_allow_html=True)
-    add_chatbot()
+            
+        if predicted_class and not st.session_state['loading']:
+           display_enhanced_results(predicted_class, confidence)
+        
+        add_enhanced_chatbot()
     # About section with enhanced animation
     st.markdown("""
         <div class="glass-card">
