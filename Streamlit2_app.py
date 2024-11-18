@@ -435,28 +435,32 @@ def load_css():
     
 # Define the function to download the model from Google Drive
 def download_model_from_drive():
-    file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual Google Drive file ID
+    file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual file ID
     download_url = f"https://drive.google.com/file/d/17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz/view?usp=drive_link"
     output_file = "Medicinal_Plant.h5"
+    expected_file_size = 178 * 1024 * 1024  # 178 MB in bytes
 
-    # Check if the file already exists locally
-    if not os.path.exists(output_file):
+    # Check if the model file exists and has the expected size
+    if not os.path.exists(output_file) or os.path.getsize(output_file) < expected_file_size:
         st.write("Downloading model from Google Drive...")
         gdown.download(download_url, output_file, quiet=False)
+        
+        # Verify the download was successful
+        if os.path.getsize(output_file) < expected_file_size:
+            st.error("Model download incomplete or corrupted. Please try again.")
+            return False
     else:
         st.write("Model already exists locally.")
-
+    return True
 # Load the model with caching
 @st.cache_resource
 def load_prediction_model():
     try:
-        # Download the model if it doesn't exist
-        download_model_from_drive()
-         # Check if the file exists and is of reasonable size
-        if not os.path.exists("Medicinal_Plant.h5") or os.path.getsize("Medicinal_Plant.h5") < 1e5:  # Example size check
-            st.error("Model file is either missing or corrupted.")
+         # Download the model file if not available or incomplete
+        if not download_model_from_drive():
             return None
-        # Load the model from the local file
+
+        # Load the model
         model = load_model("Medicinal_Plant.h5")
         return model
     except Exception as e:
