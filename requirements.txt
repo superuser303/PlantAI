@@ -6,3 +6,5 @@ tensorflow-cpu
 Pillow
 openai
 tokenizers==0.13.3  # Add this to specify a compatible version
+rustc
+cargo
