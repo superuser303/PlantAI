@@ -435,7 +435,7 @@ def load_css():
 # Define the function to download the model from Google Drive
 def download_model_from_drive():
     file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual Google Drive file ID
-    download_url = f"https://drive.google.com/file/d/17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz/view?usp=drive_link"
+    download_url = f"https://drive.google.com/uc?id={17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz}""
     output_file = "Medicinal_Plant.h5"
 
     # Check if the file already exists locally
