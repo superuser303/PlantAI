@@ -1,7 +1,7 @@
-torch
-openai
-Pillow
-tensorflow
 streamlit
-transformers
+numpy
+transformers==4.31.0  # Ensure the version supports AutoModelForCausalLM
+torch
 tensorflow-cpu
+Pillow
+openai
