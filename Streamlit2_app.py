@@ -433,11 +433,11 @@ def load_css():
     </style>
     """, unsafe_allow_html=True)
     
-# Define the function to download the model from Google Drive
+# Paths and URLs
 MODEL_PATH = "Medicinal_Plant.h5"  # Path to save the model locally
 DRIVE_URL = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Google Drive direct download link
 EXPECTED_FILE_SIZE = 178 * 1024 * 1024  # Expected size in bytes (178 MB)
-SIZE_TOLERANCE = 0.5 * 1024 * 1024  # Allowable size variation of 0.5 MB (512 KB)
+SIZE_TOLERANCE = 5 * 1024 * 1024  # Allowable size variation of 5 MB
 
 def download_model_from_drive():
     """
@@ -446,52 +446,51 @@ def download_model_from_drive():
     Returns:
         bool: True if the model is downloaded and verified successfully, False otherwise.
     """
-    # Check if the model file already exists
-    if os.path.exists(MODEL_PATH):
-        file_size = os.path.getsize(MODEL_PATH)
-        if abs(file_size - EXPECTED_FILE_SIZE) <= SIZE_TOLERANCE:
-            st.info("Model already exists and is verified. Skipping download.")
-            return True
-        else:
-            st.warning("Model file size mismatch or corruption. Redownloading...")
-            os.remove(MODEL_PATH)  # Remove the corrupted file
-
-    # Attempt to download the file
     try:
+        # Check if the model already exists locally
+        if os.path.exists(MODEL_PATH):
+            file_size = os.path.getsize(MODEL_PATH)
+            
+            # Check file size with tolerance
+            if abs(file_size - EXPECTED_FILE_SIZE) <= SIZE_TOLERANCE:
+                st.success("Model file is already downloaded and verified.")
+                return True
+            else:
+                st.warning("Existing model file size is incorrect. Re-downloading...")
+                os.remove(MODEL_PATH)  # Delete the corrupted/incomplete file
+
+        # Download the model using gdown
         st.info("Downloading the model from Google Drive...")
         gdown.download(DRIVE_URL, MODEL_PATH, quiet=False)
-    except Exception as e:
-        st.error(f"Error during model download: {e}")
-        return False
 
-    # Verify the file's size after download
-    if os.path.exists(MODEL_PATH):
+        # Verify downloaded file size
         file_size = os.path.getsize(MODEL_PATH)
         if abs(file_size - EXPECTED_FILE_SIZE) <= SIZE_TOLERANCE:
             st.success("Model downloaded and verified successfully!")
             return True
         else:
-            st.error(f"Downloaded model size mismatch: {file_size / (1024 * 1024):.2f} MB. Deleting corrupted file.")
-            os.remove(MODEL_PATH)  # Remove corrupted file
-    else:
-        st.error("Model download failed. File does not exist.")
+            st.error("Downloaded file size does not match expected size. File may be corrupted.")
+            os.remove(MODEL_PATH)  # Delete corrupted file
+            return False
 
-    return False
+    except Exception as e:
+        st.error(f"Error during model download: {e}")
+        return False
         
     # Load the model with caching
 @st.cache_resource
 def load_prediction_model():
+    """
+    Loads the prediction model from the saved file.
+    Returns the loaded model object.
+    """
     try:
-         # Download the model file if not available or incomplete
-        if not download_model_from_drive():
-            return None
-
-        # Load the model
         model = load_model(MODEL_PATH)
+        st.success("Prediction model loaded successfully!")
         return model
     except Exception as e:
-        st.error(f"Error loading model: {str(e)}")
-        return False
+        st.error(f"Error loading the model: {e}")
+        return None
         
 def add_enhanced_chatbot():
     # Initialize session state for chat visibility
