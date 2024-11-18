@@ -70,7 +70,7 @@ methods_of_preparation = {
     "Neem": "Various parts of the neem tree are used, including leaves, bark, and oil. It's known for its antibacterial and antifungal properties.",
     "Nithyapushpa": "The flowers are used in traditional medicine, often for their calming effects.",
     "Nooni": "Different parts of the tree are used traditionally. The oil extracted from the seeds is used for various purposes.",
-    "Pappaya": "Consume fruit; leaves rm used for certain health benefits.",
+    "Pappaya": "Consume fruit; leaves traditionally used for certain health benefits.",
     "Pepper": "Spice for flavor; potential digestive and antimicrobial properties.",
     "Pomegranate": "Eat seeds or drink juice for antioxidant benefits.",
     "Raktachandini": "Traditional uses; some parts may be toxic, use caution.",
@@ -435,40 +435,37 @@ def load_css():
     
 # Define the function to download the model from Google Drive
 def download_model_from_drive():
-    """
-    Downloads the model file from Google Drive if it doesn't already exist locally.
+    file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual file ID
+    download_url = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"
+    output_file = "Medicinal_Plant.h5"
+    expected_file_size = 178 * 1024 * 1024  # 178 MB in bytes
 
-    Returns:
-        bool: True if the model is downloaded and valid, False otherwise.
-    """
-    model_path = "/mount/src/plantai/Medicinal_Plant.h5"  # Local path to save the model
-    drive_url = "https://drive.google.com/uc?id=1v7xebXPPkkbQYjAE0qyxiklhogfjtnj4"  # Direct download link for Google Drive
-
-    # Check if the model file already exists
-    if os.path.exists(model_path):
-        st.info("Model already exists. Skipping download.")
-        return True
-
-    # Try downloading the model file
-    st.info("Downloading the model from Google Drive...")
-    try:
-        gdown.download(drive_url, model_path, quiet=False)
-    except Exception as e:
-        st.error(f"Error during download: {e}")
-        return False
-
-    # Verify the file's existence and size
-    if not os.path.exists(model_path):
-        st.error("Model download failed. File does not exist.")
-        return False
-
-    if os.path.getsize(model_path) < 1e6:  # Example: Ensure the file size is >1MB
-        st.error("Downloaded model file is too small, likely corrupted.")
-        os.remove(model_path)  # Remove the corrupted file
-        return False
-
-    st.success("Model downloaded successfully!")
+    # Check if the model file exists and has the expected size
+    if not os.path.exists(output_file) or os.path.getsize(output_file) < expected_file_size:
+        st.write("Downloading model from Google Drive...")
+        gdown.download(download_url, output_file, quiet=False)
+        
+        # Verify the download was successful
+        if os.path.getsize(output_file) < expected_file_size:
+            st.error("Model download incomplete or corrupted. Please try again.")
+            return False
+    else:
+        st.write("Model already exists locally.")
     return True
+# Load the model with caching
+@st.cache_resource
+def load_prediction_model():
+    try:
+         # Download the model file if not available or incomplete
+        if not download_model_from_drive():
+            return None
+
+        # Load the model
+        model = load_model("Medicinal_Plant.h5")
+        return model
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
+        return None
     
 def add_enhanced_chatbot():
     # Initialize session state for chat visibility
