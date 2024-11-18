@@ -448,7 +448,7 @@ def download_model():
     st.info("Downloading the model from Google Drive...")
     try:
         gdown.download(model_url, model_path, quiet=False)
-    except Exception as e:
+        except Exception as e:
         st.error(f"Error downloading the model: {e}")
         return False
 
