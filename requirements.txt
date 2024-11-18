@@ -5,4 +5,3 @@ torch==2.5.1
 tensorflow-cpu==2.18.0
 Pillow==11.0.0
 openai==1.54.4
-tokenizers @ https://files.pythonhosted.org/packages/03/52/da5837c0907508a45784f21702d29afded938f4f00932b368915ef1fe28a/tokenizers-0.13.3-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
