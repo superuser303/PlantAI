@@ -436,7 +436,7 @@ def load_css():
 # Define the function to download the model from Google Drive
 def download_model_from_drive():
     file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual file ID
-    download_url = f"https://drive.google.com/file/d/17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz/view?usp=drive_link"
+    download_url = "https://drive.google.com/file/d/17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz/view?usp=drive_link"
     output_file = "Medicinal_Plant.h5"
     expected_file_size = 178 * 1024 * 1024  # 178 MB in bytes
 
