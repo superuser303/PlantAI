@@ -460,6 +460,15 @@ def download_model_from_drive():
         gdown.download(drive_url, MODEL_PATH, quiet=False)
     except Exception as e:
         st.error(f"Error during model download: {e}")
+    # Verify the file's size after download
+    if os.path.exists(model_path) and os.path.getsize(model_path) >= expected_file_size:
+        st.success("Model downloaded and verified successfully!")
+        return True
+    else:
+        st.error("Model download failed or the file is corrupted. Please retry.")
+        if os.path.exists(model_path):
+            os.remove(model_path)  # Remove the corrupted file
+        return False
         
     # Load the model with caching
 @st.cache_resource
