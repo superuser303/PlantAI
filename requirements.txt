@@ -1,6 +1,6 @@
-streamlit
-transformers
 torch
 openai
 Pillow
 tensorflow
+streamlit==1.25.0
+transformers==4.31.0
