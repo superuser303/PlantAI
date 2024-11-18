@@ -445,13 +445,15 @@ def download_model_from_drive():
         st.write("Downloading model from Google Drive...")
         gdown.download(download_url, output_file, quiet=False)
         
-        # Verify the download was successful
-        if os.path.getsize(output_file) < expected_file_size:
-            st.error("Model download incomplete or corrupted. Please try again.")
-            return False
+    # Verify the file's size after download
+    if os.path.exists(model_path) and os.path.getsize(model_path) >= expected_file_size:
+        st.success("Model downloaded and verified successfully!")
+        return True
     else:
-        st.write("Model already exists locally.")
-    return True
+        st.error("Model download failed or the file is corrupted. Please retry.")
+        if os.path.exists(model_path):
+            os.remove(model_path)  # Remove the corrupted file
+        return False
 # Load the model with caching
 @st.cache_resource
 def load_prediction_model():
