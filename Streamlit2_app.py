@@ -456,12 +456,7 @@ def download_model():
     if not os.path.exists(model_path):
         st.error("Model download failed or the file is corrupted.")
         return False
-
-    # Optionally check file size or integrity if needed
-    if os.path.getsize(model_path) < 1e6:  # Example: Check if file is at least 1MB
-        st.error("Downloaded model file appears to be too small. Possible corruption.")
-        return False
-
+        
     st.success("Model downloaded successfully!")
     return True
 
