@@ -450,14 +450,15 @@ def download_model_from_drive():
     if os.path.exists(MODEL_PATH):
         file_size = os.path.getsize(MODEL_PATH)
         if abs(file_size - EXPECTED_FILE_SIZE) <= SIZE_TOLERANCE:
-            st.info("Model already exists and is complete. Skipping download.")
+            st.info("Model already exists and is verified. Skipping download.")
             return True
         else:
-            st.warning(f"Existing model file size mismatch: {file_size / (1024 * 1024):.2f} MB. Re-downloading...")
+            st.warning("Model file size mismatch or corruption. Redownloading...")
+            os.remove(MODEL_PATH)  # Remove the corrupted file
 
     # Attempt to download the file
-    st.info("Downloading the model from Google Drive...")
     try:
+        st.info("Downloading the model from Google Drive...")
         gdown.download(DRIVE_URL, MODEL_PATH, quiet=False)
     except Exception as e:
         st.error(f"Error during model download: {e}")
@@ -470,11 +471,12 @@ def download_model_from_drive():
             st.success("Model downloaded and verified successfully!")
             return True
         else:
-            st.error(f"Downloaded model file size mismatch: {file_size / (1024 * 1024):.2f} MB. Possible corruption.")
+            st.error(f"Downloaded model size mismatch: {file_size / (1024 * 1024):.2f} MB. Deleting corrupted file.")
             os.remove(MODEL_PATH)  # Remove corrupted file
     else:
         st.error("Model download failed. File does not exist.")
-        return False
+
+    return False
         
     # Load the model with caching
 @st.cache_resource
@@ -485,7 +487,7 @@ def load_prediction_model():
             return None
 
         # Load the model
-        model = load_model("Medicinal_Plant.h5")
+        model = load_model(MODEL_PATH)
         return model
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
