@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import numpy as np
 from tensorflow.keras.preprocessing import image
@@ -431,11 +432,28 @@ def load_css():
     </style>
     """, unsafe_allow_html=True)
     
-# Load model with caching
+# Define the function to download the model from Google Drive
+def download_model_from_drive():
+    file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual Google Drive file ID
+    download_url = f"https://drive.google.com/file/d/17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz/view?usp=drive_link"
+    output_file = "Medicinal_Plant.h5"
+
+    # Check if the file already exists locally
+    if not os.path.exists(output_file):
+        st.write("Downloading model from Google Drive...")
+        gdown.download(download_url, output_file, quiet=False)
+    else:
+        st.write("Model already exists locally.")
+
+# Load the model with caching
 @st.cache_resource
 def load_prediction_model():
     try:
-        model = load_model("//home//santy//DesignProject//Medicinal_Plant.h5")
+        # Download the model if it doesn't exist
+        download_model_from_drive()
+
+        # Load the model from the local file
+        model = load_model("Medicinal_Plant.h5")
         return model
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
