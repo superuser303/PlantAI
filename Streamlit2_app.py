@@ -10,7 +10,7 @@ import base64
 from pathlib import Path
 import time
 
-openai.api_key = "YOUR_OPENAI_API_KEY"
+openai.api_key = "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"
 # Load pre-trained DialoGPT model and tokenizer
 tokenizer = AutoTokenizer.from_pretrained("microsoft/DialoGPT-medium")
 model = AutoModelForCausalLM.from_pretrained("microsoft/DialoGPT-medium")
