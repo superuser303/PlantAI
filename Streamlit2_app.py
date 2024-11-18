@@ -1,8 +1,9 @@
-import os
 import streamlit as st
+import gdown
 import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
+import os
 from PIL import Image
 import base64
 from pathlib import Path
@@ -831,11 +832,35 @@ def main():
                     <p style="color: #6b7280;">Upload an image to see the analysis</p>
                 </div>
             """, unsafe_allow_html=True)
-            
-        if predicted_class and not st.session_state['loading']:
-           display_enhanced_results(predicted_class, confidence)
-        
-        add_enhanced_chatbot()
+    # Initialize variables
+    predicted_class = None
+    confidence = None
+
+    # Load the model
+    model = load_prediction_model()
+    if model is None:
+        return
+
+    # Your app logic goes here
+    st.title("PlantAI - Medicinal Plant Identifier")
+
+    # Example: Handling user input
+    user_input = st.text_input("Enter details for plant classification:")
+
+    if user_input:
+        # Assuming you have a function `predict` to make predictions using the model
+        try:
+            predicted_class, confidence = predict(user_input, model)  # Replace with your actual prediction logic
+            st.success(f"Prediction: {predicted_class} with confidence {confidence:.2f}")
+        except Exception as e:
+            st.error(f"Error during prediction: {str(e)}")
+
+    # Check if prediction results are available and display them
+    if predicted_class and not st.session_state.get('loading', False):
+        display_enhanced_results(predicted_class, confidence)  # Make sure `display_enhanced_results` is defined
+
+    # Add additional features or chatbots
+    add_enhanced_chatbot()  # Ensure `add_enhanced_chatbot` is defined
     # About section with enhanced animation
     st.markdown("""
         <div class="glass-card">
