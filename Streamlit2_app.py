@@ -434,45 +434,82 @@ def load_css():
     """, unsafe_allow_html=True)
     
 # Paths and URLs
-MODEL_PATH = "Medicinal_Plant.h5"  # Path to save the model locally
-DRIVE_URL = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Google Drive direct download link
-EXPECTED_FILE_SIZE = 178 * 1024 * 1024  # Expected size in bytes (178 MB)
-SIZE_TOLERANCE = 5 * 1024 * 1024  # Allowable size variation of 5 MB
 
-def download_model_from_drive():
-    """
-    Downloads the model file from Google Drive if it doesn't already exist locally.
-    Verifies the file size to ensure a complete download.
-    Returns:
-        bool: True if the model is downloaded and verified successfully, False otherwise.
-    """
+def download_model():
+    model_path = "/mount/src/plantai/Medicinal_Plant.h5"  # Local path to save the model
+    model_url = "https://drive.google.com/uc?id=1v7xebXPPkkbQYjAE0qyxiklhogfjtnj4"  # Google Drive model file URL
+
+    # Check if the model file already exists to avoid re-downloading
+    if os.path.exists(model_path):
+        st.info("Model already exists. Skipping download.")
+        return True
+
+    # Try downloading the model
+    st.info("Downloading the model from Google Drive...")
     try:
-        # Check if the model already exists locally
-        if os.path.exists(MODEL_PATH):
-            file_size = os.path.getsize(MODEL_PATH)
+        gdown.download(model_url, model_path, quiet=False)
+    except Exception as e:
+        st.error(f"Error downloading the model: {e}")
+        return False
+
+    # Verify the file was downloaded successfully
+    if not os.path.exists(model_path):
+        st.error("Model download failed or the file is corrupted.")
+        return False
+
+    # Optionally check file size or integrity if needed
+    if os.path.getsize(model_path) < 1e6:  # Example: Check if file is at least 1MB
+        st.error("Downloaded model file appears to be too small. Possible corruption.")
+        return False
+
+    st.success("Model downloaded successfully!")
+    return True
+
+
+# Load the Keras model
+def load_keras_model():
+    model_path = "/mount/src/plantai/Medicinal_Plant.h5"
+    try:
+        model = load_model(model_path)
+        st.success("Model loaded successfully!")
+        return model
+    except Exception as e:
+        st.error(f"Error loading the model: {e}")
+        return None
+
+
+# Function to preprocess uploaded image
+def preprocess_image(image):
+    img = Image.open(image)
+    img = img.resize((224, 224))  # Resize to match model input size
+    img_array = np.array(img) / 255.0  # Normalize the image
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    return img_array
+
+
+# Streamlit app starts here
+st.title("PlantAI - Medicinal Plant Detection")
+
+# Call the download function and load the model
+if download_model():
+    model = load_keras_model()
+    if model:
+        # Allow users to upload images
+        uploaded_file = st.file_uploader("Upload a plant image", type=["jpg", "png", "jpeg"])
+        if uploaded_file:
+            st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
             
-            # Check file size with tolerance
-            if abs(file_size - EXPECTED_FILE_SIZE) <= SIZE_TOLERANCE:
-                st.success("Model file is already downloaded and verified.")
-                return True
-            else:
-                st.warning("Existing model file size is incorrect. Re-downloading...")
-                os.remove(MODEL_PATH)  # Delete the corrupted/incomplete file
-
-        # Download the model using gdown
-        st.info("Downloading the model from Google Drive...")
-        gdown.download(DRIVE_URL, MODEL_PATH, quiet=False)
-
-        # Verify downloaded file size
-        file_size = os.path.getsize(MODEL_PATH)
-        if abs(file_size - EXPECTED_FILE_SIZE) <= SIZE_TOLERANCE:
-            st.success("Model downloaded and verified successfully!")
-            return True
-        else:
-            st.error("Downloaded file size does not match expected size. File may be corrupted.")
-            os.remove(MODEL_PATH)  # Delete corrupted file
-            return False
-
+            # Preprocess and make predictions
+            try:
+                processed_image = preprocess_image(uploaded_file)
+                prediction = model.predict(processed_image)
+                st.write(f"Prediction: {np.argmax(prediction)}")  # Display predicted class
+            except Exception as e:
+                st.error(f"Error processing the image or making a prediction: {e}")
+    else:
+        st.error("Model could not be loaded. Please ensure it is downloaded correctly.")
+else:
+    st.error("Unable to proceed without the model. Please try again.")
     except Exception as e:
         st.error(f"Error during model download: {e}")
         return False
