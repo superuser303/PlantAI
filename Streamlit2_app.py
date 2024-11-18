@@ -460,6 +460,20 @@ def download_model_from_drive():
         gdown.download(drive_url, MODEL_PATH, quiet=False)
     except Exception as e:
         st.error(f"Error during model download: {e}")
+        
+    # Load the model with caching
+@st.cache_resource
+def load_prediction_model():
+    try:
+         # Download the model file if not available or incomplete
+        if not download_model_from_drive():
+            return None
+
+        # Load the model
+        model = load_model("Medicinal_Plant.h5")
+        return model
+    except Exception as e:
+        st.error(f"Error loading model: {str(e)}")
         return False
         
 def add_enhanced_chatbot():
