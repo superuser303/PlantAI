@@ -429,7 +429,6 @@ def load_css():
         100% { transform: rotate(360deg); }
     }
     </style>
-        </style>
     """, unsafe_allow_html=True)
     
 # Load model with caching
