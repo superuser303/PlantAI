@@ -452,7 +452,10 @@ def load_prediction_model():
     try:
         # Download the model if it doesn't exist
         download_model_from_drive()
-
+         # Check if the file exists and is of reasonable size
+        if not os.path.exists("Medicinal_Plant.h5") or os.path.getsize("Medicinal_Plant.h5") < 1e5:  # Example size check
+            st.error("Model file is either missing or corrupted.")
+            return None
         # Load the model from the local file
         model = load_model("Medicinal_Plant.h5")
         return model
