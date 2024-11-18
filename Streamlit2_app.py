@@ -70,7 +70,7 @@ methods_of_preparation = {
     "Neem": "Various parts of the neem tree are used, including leaves, bark, and oil. It's known for its antibacterial and antifungal properties.",
     "Nithyapushpa": "The flowers are used in traditional medicine, often for their calming effects.",
     "Nooni": "Different parts of the tree are used traditionally. The oil extracted from the seeds is used for various purposes.",
-    "Pappaya": "Consume fruit; leaves traditionally used for certain health benefits.",
+    "Pappaya": "Consume fruit; leaves rm used for certain health benefits.",
     "Pepper": "Spice for flavor; potential digestive and antimicrobial properties.",
     "Pomegranate": "Eat seeds or drink juice for antioxidant benefits.",
     "Raktachandini": "Traditional uses; some parts may be toxic, use caution.",
@@ -434,6 +434,7 @@ def load_css():
     """, unsafe_allow_html=True)
     
 # Define the function to download the model from Google Drive
+import gdown
 def download_model_from_drive():
     file_id = "17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"  # Replace with your actual file ID
     download_url = "https://drive.google.com/file/d/17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz/view?usp=drive_link"
