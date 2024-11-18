@@ -1,7 +1,8 @@
 streamlit
 numpy
-transformers==4.31.0  # Ensure the version supports AutoModelForCausalLM
+transformers==4.31.0  # Ensure this version is compatible with tokenizers
 torch
 tensorflow-cpu
 Pillow
 openai
+tokenizers==0.13.3  # Add this to specify a compatible version
