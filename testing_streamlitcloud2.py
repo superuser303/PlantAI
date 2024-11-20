@@ -521,10 +521,10 @@ def load_css():
     .confidence-fill.low {
         background: linear-gradient(90deg, #f59e0b, #d97706);
     }
-              
     </style>
-                
-    """, unsafe_allow_html=True)    
+
+    """, unsafe_allow_html=True)
+    
 # Load model with caching
 @st.cache_resource
 def load_prediction_model():
@@ -539,15 +539,10 @@ def load_prediction_model():
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         return None
-        
+
 def predict_class(img):
     try:
-        # Set loading state to True at the start of prediction
         st.session_state['loading'] = True
-        
-        # Optional: Add a slight delay to show loading spinner
-        time.sleep(1.5)
-        
         img = Image.open(img).convert('RGB')
         img = img.resize((256, 256))
         img_array = image.img_to_array(img)
@@ -558,28 +553,23 @@ def predict_class(img):
             st.session_state['model'] = load_prediction_model()
 
         if st.session_state['model'] is not None:
+            time.sleep(1)
             predictions = st.session_state['model'].predict(img_array)
             predicted_class_index = np.argmax(predictions)
             confidence = float(predictions[0][predicted_class_index]) * 100
-            
-            # Set loading state to False after prediction
             st.session_state['loading'] = False
             return class_labels[predicted_class_index], confidence
-        
-        # If model loading fails
-        st.session_state['loading'] = False
         return None, None
     except Exception as e:
         st.error(f"Error during prediction: {str(e)}")
         st.session_state['loading'] = False
         return None, None
-            
 def main():
     # Load CSS
-        load_css()
+    load_css()
     
     # Header with enhanced animation, slogan, and modernized team members
-        st.markdown("""
+    st.markdown("""
         <div class="header-container">
             <h1 class="main-title">🌿 MediPlant AI</h1>
             <p class="subtitle" style="color: #065f46; font-size: 1.2rem; margin-bottom: 1rem;">
@@ -596,7 +586,7 @@ def main():
             </div>
         </div>
     """, unsafe_allow_html=True)
-        st.markdown("""
+    st.markdown("""
     <div class="team-section">
         <h4 style="color: #065f46; margin: 0 0 0.5rem 0;">Project Team</h4>
         <div class="team-grid">
@@ -632,9 +622,9 @@ def main():
     </div>
 """, unsafe_allow_html=True)
 
-col1, col2 = st.columns([3, 2])
+    col1, col2 = st.columns([3, 2])
     
-with col1:
+    with col1:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
         uploaded_file = st.file_uploader(
@@ -706,18 +696,16 @@ with col1:
                     }
                 </script>
             """, unsafe_allow_html=True)
-with col2:
+    with col2:
         if uploaded_file:
             st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-        
-        # Loading Spinner
-        if st.session_state['loading']:
-            st.markdown("""
-                <div class="loading-overlay">
-                    <div class="loading-spinner"></div>
-                    <div class="loading-text">Analyzing plant image...</div>
-                </div>
-            """, unsafe_allow_html=True)    
+            if st.session_state['loading']:
+                st.markdown("""
+                    <div class="loading-container">
+                        <div class="loading-spinner"></div>
+                        <div class="loading-text">Analyzing plant image...</div>
+                    </div>
+                """, unsafe_allow_html=True)
             
             predicted_class, confidence = predict_class(uploaded_file)
             
@@ -764,7 +752,7 @@ with col2:
             """, unsafe_allow_html=True)
 
     # About section with enhanced animation
-        st.markdown("""
+    st.markdown("""
         <div class="glass-card">
             <h3 style="color: #064e3b; margin-bottom: 1rem;">About MediPlant AI</h3>
             <p style="color: #374151; line-height: 1.6;">
@@ -785,4 +773,3 @@ with col2:
 
 if __name__ == "__main__":
     main()
-
