@@ -1,17 +1,11 @@
 import streamlit as st
-import gdown
 import numpy as np
 from tensorflow.keras.preprocessing import image
-import os
 from tensorflow.keras.models import load_model
 from PIL import Image
 import base64
 from pathlib import Path
 import time
-from openai import OpenAI
-
-# Initialize OpenAI client
-client = OpenAI(api_key="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")
 
 # Initialize session state
 if 'model' not in st.session_state:
@@ -80,50 +74,85 @@ methods_of_preparation = {
     "Wood_sorel": "Make tea or use leaves for immune support. Use leaves in salads; some varieties contain oxalic acid."
 }
 
-
-# Use of medicine dictionary
+    # Original dictionary
 use_of_medicine = {
-    "Aloevera": "{improve skin and prevent wrinkles,wound healing}",
-    "Amla": "{controlling diabetes,hair amazing,losing weight,skin healthy}",
-    "Amruta_Balli": "{Immunomodulatory, fever.}",
-    "Arali": "{ parts for traditional healing.}",
-    "Ashoka": "{Uterine health, menstrual issue.}",
-    "Ashwagandha": "{Adaptogen, stress relief.}",
-    "Avocado": "{ Nutrient-rich, heart health.}",
-    "Bamboo": "{Shoots, traditional cuisine.}",
-    "Basale": "{Shoots, traditional cuisine.}",
-    "Betel": "{Digestive, chewed with areca nut.}",
-    "Betel_Nut": "{Chewing, traditional practices, caution.}",
-    "Brahmi": "{Cognitive enhancer, adaptogen}",
-    "Castor": "{ Oil for medicinal, cosmetic use}",
-    "Curry_Leaf": "{ Flavoring, potential traditional uses.}",
-    "Doddapatre": "{ Poultice, skin conditions.}",
-    "Ekka": "{Traditional uses, caution for toxicity.}",
-    "Ganike": "{Respiratory health, traditional medicine.}",
-    "Guava": "{ Vitamin C, digestive benefits}",
-    "Geranium": "{ Oil for aromatherapy, skincare.}",
-    "Henna": "{ Hair coloring, natural dye.}",
-    "Hibiscus": "{Tea for antioxidants, skin health.}",
-    "Honge": "{Anti-inflammatory, traditional use.}",
-    "Insulin": "{Potential blood sugar regulation, traditional use.}",
-    "Jasmine": "{Tea, relaxation, stress relief.}",
-    "Lemon": "{Digestive aid, rich in vitamin C.}",
-    "Lemon_grass": "{Tea, digestive, calming effects.}",
-    "Mango": "{Fruit, traditional uses for health.}",
-    "Mint": "{Tea, aids digestion, refreshing flavor.}",
-    "Nagadali": "{Traditional uses, potential medicinal purposes.}",
-    "Neem": "{ Antibacterial, antifungal, supports skin health.}",
-    "Nithyapushpa": "{Calming effects, traditional use.}",
-    "Nooni": "{ Oil from seeds, various traditional uses.}",
-    "Pappaya": "{ Fruit, leaves, traditional uses.}",
-    "Pepper": "{ Spice, potential digestive benefits.}",
-    "Pomegranate": "{Antioxidant-rich, heart health.}",
-    "Raktachandini": "{Traditional uses, caution for potential toxicity.}",
-    "Rose": "{Tea, calming, aromatic effects.}",
-    "Sapota": "{Sweet taste, nutritional content.}",
-    "Tulasi": "{Tea, immune support, respiratory health.}",
-    "Wood_sorel": "{Leaves in salads, some varieties may have medicinal uses.}"
+    "Lemon_grass": [
+        "Calms the nervous system and reduces anxiety.",
+        "Aids digestion and relieves bloating.",
+        "Has anti-inflammatory and pain-relieving properties."
+    ],
+    "Mango": [
+        "Rich in vitamins A and C, boosts immune health.",
+        "Aids in digestion and improves skin condition."
+    ],
+    "Mint": [
+        "Soothes the digestive system and relieves nausea.",
+        "Has a refreshing effect and clears nasal congestion.",
+        "Acts as a natural breath freshener."
+    ],
+    "Nagadali": [
+        "Anti-inflammatory properties, used in pain relief.",
+        "Supports traditional medicinal practices."
+    ],
+    "Neem": [
+        "Antibacterial and antifungal, supports skin health.",
+        "Boosts immunity and helps purify the blood."
+    ],
+    "Nithyapushpa": [
+        "Calming effect, used in stress and anxiety relief.",
+        "Promotes mental well-being in traditional medicine."
+    ],
+    "Nooni": [
+        "Anti-inflammatory properties, used for pain relief.",
+        "Boosts immune function and overall well-being."
+    ],
+    "Pappaya": [
+        "Aids in digestion with enzymes like papain.",
+        "Rich in vitamins and supports skin health.",
+        "Used traditionally for wound healing and immunity."
+    ],
+    "Pepper": [
+        "Improves digestion and relieves bloating.",
+        "Has antimicrobial properties and boosts metabolism."
+    ],
+    "Pomegranate": [
+        "Rich in antioxidants, supports heart and skin health.",
+        "Anti-inflammatory and aids in digestion."
+    ],
+    "Raktachandini": [
+        "Anti-inflammatory and used in pain relief.",
+        "Traditional use with caution due to toxicity."
+    ],
+    "Rose": [
+        "Calming effect, used in aromatherapy.",
+        "Hydrates skin and promotes relaxation."
+    ],
+    "Sapota": [
+        "Rich in dietary fiber, aids in digestion.",
+        "Provides energy and supports skin health."
+    ],
+    "Tulasi": [
+        "Boosts immunity and supports respiratory health.",
+        "Anti-inflammatory and used in treating colds."
+    ],
+    "Wood_sorel": [
+        "Rich in vitamin C, used in treating scurvy.",
+        "Anti-inflammatory and aids digestion."
+    ],
+    "Jasmine": [
+        "Calms the mind and reduces anxiety.",
+        "Used in teas for relaxation and stress relief."
+    ],
+    "Lemon": [
+        "Rich in vitamin C, boosts immune function.",
+        "Aids in digestion and supports detoxification.",
+        "Promotes skin health and fights free radicals."
+    ]
 }
+
+# Applying strip to each string in the dictionary
+for key in use_of_medicine:
+    use_of_medicine[key] = [use.strip() for use in use_of_medicine[key]]
 
 def load_css():
     st.markdown("""
@@ -416,244 +445,93 @@ def load_css():
         margin-top: 0.25rem;
     }
     
-    /* Loading Animation */
-    .loading-spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f3f4f6;
-        border-top: 4px solid #059669;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
+    /* Animated Confidence Bar Styles */
+    .confidence-container {
+        margin: 1rem 0;
+        padding: 1rem;
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
     
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+    .confidence-label {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.5rem;
+        color: #374151;
+        font-weight: 500;
+    }
+    
+    .confidence-bar {
+        height: 1rem;
+        background: #e5e7eb;
+        border-radius: 1rem;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .confidence-fill {
+        height: 100%;
+        width: 0;
+        border-radius: 1rem;
+        background: linear-gradient(90deg, #059669, #064e3b);
+        transition: width 1s ease-in-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .confidence-fill::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+            45deg,
+            rgba(255,255,255,0.2) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(255,255,255,0.2) 50%,
+            rgba(255,255,255,0.2) 75%,
+            transparent 75%,
+            transparent
+        );
+        background-size: 1rem 1rem;
+        animation: shimmer 1s linear infinite;
+    }
+    
+    @keyframes shimmer {
+        0% { transform: translateX(-1rem); }
+        100% { transform: translateX(1rem); }
+    }
+    
+    /* Color variations based on confidence level */
+    .confidence-fill.high {
+        background: linear-gradient(90deg, #059669, #064e3b);
+    }
+    
+    .confidence-fill.medium {
+        background: linear-gradient(90deg, #0ea5e9, #0369a1);
+    }
+    
+    .confidence-fill.low {
+        background: linear-gradient(90deg, #f59e0b, #d97706);
     }
     </style>
+
     """, unsafe_allow_html=True)
     
-# Paths and URLs
-
-def download_model():
-    model_path = "/mount/src/plantai/Medicinal_Plant.h5"  # Local path to save the model
-    model_url = "https://drive.google.com/uc?id=1v7xebXPPkkbQYjAE0qyxiklhogfjtnj4"  # Google Drive model file URL
-
-    # Check if the model file already exists to avoid re-downloading
-    if os.path.exists(model_path):
-        st.info("Model already exists. Skipping download.")
-        return True
-
-    # Try downloading the model
-    st.info("Downloading the model from Google Drive...")
-    try:
-        gdown.download(model_url, model_path, quiet=False)
-        except Exception as e:
-        st.error(f"Error downloading the model: {e}")
-        return False
-
-    # Verify the file was downloaded successfully
-    if not os.path.exists(model_path):
-        st.error("Model download failed or the file is corrupted.")
-        return False
-        
-    st.success("Model downloaded successfully!")
-    return True
-
-
-# Load the Keras model
-def load_keras_model():
-    model_path = "/mount/src/plantai/Medicinal_Plant.h5"
-    try:
-        model = load_model(model_path)
-        st.success("Model loaded successfully!")
-        return model
-    except Exception as e:
-        st.error(f"Error loading the model: {e}")
-        return None
-
-
-# Function to preprocess uploaded image
-def preprocess_image(image):
-    img = Image.open(image)
-    img = img.resize((224, 224))  # Resize to match model input size
-    img_array = np.array(img) / 255.0  # Normalize the image
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
-    return img_array
-
-
-# Streamlit app starts here
-st.title("PlantAI - Medicinal Plant Detection")
-
-# Call the download function and load the model
-if download_model():
-    model = load_keras_model()
-    if model:
-        # Allow users to upload images
-        uploaded_file = st.file_uploader("Upload a plant image", type=["jpg", "png", "jpeg"])
-        if uploaded_file:
-            st.image(uploaded_file, caption="Uploaded Image", use_column_width=True)
-            
-            # Preprocess and make predictions
-            try:
-                processed_image = preprocess_image(uploaded_file)
-                prediction = model.predict(processed_image)
-                st.write(f"Prediction: {np.argmax(prediction)}")  # Display predicted class
-            except Exception as e:
-                st.error(f"Error processing the image or making a prediction: {e}")
-    else:
-        st.error("Model could not be loaded. Please ensure it is downloaded correctly.")
-else:
-    st.error("Unable to proceed without the model. Please try again.")
-    except Exception as e:
-        st.error(f"Error during model download: {e}")
-        return False
-        
-    # Load the model with caching
+# Load model with caching
 @st.cache_resource
 def load_prediction_model():
-    """
-    Loads the prediction model from the saved file.
-    Returns the loaded model object.
-    """
     try:
-        model = load_model(MODEL_PATH)
-        st.success("Prediction model loaded successfully!")
+        model = load_model("//home//santy//DesignProject//Medicinal_Plant.h5")
         return model
     except Exception as e:
-        st.error(f"Error loading the model: {e}")
+        st.error(f"Error loading model: {str(e)}")
         return None
-        
-def add_enhanced_chatbot():
-    # Initialize session state for chat visibility
-    if 'chat_visible' not in st.session_state:
-        st.session_state.chat_visible = False
-
-    st.markdown("""
-        <div class="chat-container">
-            <div class="chat-header" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none';">
-                <div>
-                    <h3 style="margin: 0;">💬 AI Plant Assistant</h3>
-                    <small>Ask questions about medicinal plants</small>
-                </div>
-                <span>▼</span>
-            </div>
-            <div class="chat-body" id="chat-body" style="display: none;">
-    """, unsafe_allow_html=True)
-
-    # Chat interface
-    user_input = st.text_input(
-        "",
-        placeholder="Ask about plant properties, uses, or preparation methods...",
-        key="chat_input",
-        label_visibility="collapsed"
-    )
-
-    if st.button("Send", key="chat_send", use_container_width=True):
-        if user_input:
-            try:
-                messages = []
-                for speaker, message in st.session_state.chat_history:
-                    role = "user" if speaker == "You" else "assistant"
-                    messages.append({"role": role, "content": message})
-                
-                messages.append({"role": "user", "content": user_input})
-                
-                completion = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
-                    messages=messages,
-                    max_tokens=500,
-                    temperature=0.7
-                )
-                response = completion.choices[0].message.content
-
-                st.session_state.chat_history.append(("You", user_input))
-                st.session_state.chat_history.append(("Bot", response))
-
-            except Exception as e:
-                st.error(f"Error: {str(e)}")
-
-    # Display chat history
-    for speaker, message in st.session_state.chat_history:
-        if speaker == "You":
-            st.markdown(
-                f"""<div style='text-align: right; margin: 10px 0; padding: 10px; 
-                border-radius: 10px; background-color: #e5e7eb;'>
-                <strong>{speaker}:</strong> {message}</div>""",
-                unsafe_allow_html=True
-            )
-        else:
-            st.markdown(
-                f"""<div style='text-align: left; margin: 10px 0; padding: 10px; 
-                border-radius: 10px; background-color: #dcfce7;'>
-                <strong>{speaker}:</strong> {message}</div>""",
-                unsafe_allow_html=True
-            )
-
-    st.markdown("</div></div>", unsafe_allow_html=True)
-
-def display_enhanced_results(predicted_class, confidence):
-    st.markdown("""
-        <div class="result-card">
-            <div class="result-header">
-                <h2 style="color: #064e3b; margin: 0;">🌿 Plant Identification Results</h2>
-                <span style="color: #059669; font-weight: 600;">Analysis Complete</span>
-            </div>
-            
-            <div style="margin: 1.5rem 0;">
-                <h3 style="color: #064e3b; margin: 0;">Identified Plant:</h3>
-                <h1 style="color: #059669; margin: 0.5rem 0;">{}</h1>
-                <div class="confidence-meter">
-                    <div class="confidence-fill" style="width: {}%;"></div>
-                </div>
-                <p style="color: #374151; margin: 0.5rem 0;">Confidence Score: {}%</p>
-            </div>
-
-            <div class="property-grid">
-                <div class="property-card">
-                    <h4 style="color: #064e3b; margin: 0;">Scientific Classification</h4>
-                    <p style="color: #374151;">{}</p>
-                </div>
-                <div class="property-card">
-                    <h4 style="color: #064e3b; margin: 0;">Common Names</h4>
-                    <p style="color: #374151;">{}</p>
-                </div>
-                <div class="property-card">
-                    <h4 style="color: #064e3b; margin: 0;">Native Region</h4>
-                    <p style="color: #374151;">{}</p>
-                </div>
-            </div>
-
-            <div class="expandable-section">
-                <div class="expandable-header">
-                    <h4 style="color: #064e3b; margin: 0;">📝 Preparation Methods</h4>
-                    <span>▼</span>
-                </div>
-                <div class="expandable-content">
-                    {}
-                </div>
-            </div>
-
-            <div class="expandable-section">
-                <div class="expandable-header">
-                    <h4 style="color: #064e3b; margin: 0;">💊 Medicinal Properties</h4>
-                    <span>▼</span>
-                </div>
-                <div class="expandable-content">
-                    {}
-                </div>
-            </div>
-        </div>
-    """.format(
-        predicted_class,
-        confidence,
-        round(confidence, 1),
-        get_scientific_classification(predicted_class),
-        get_common_names(predicted_class),
-        get_native_region(predicted_class),
-        methods_of_preparation.get(predicted_class, "Information not available"),
-        format_medicinal_uses(predicted_class)
-    ), unsafe_allow_html=True)
 
 def predict_class(img):
     try:
@@ -679,39 +557,6 @@ def predict_class(img):
         st.error(f"Error during prediction: {str(e)}")
         st.session_state['loading'] = False
         return None, None
-def format_medicinal_uses(plant_name):
-    uses = use_of_medicine.get(plant_name, "No information available")
-    uses = uses.strip("{}").split(",")
-    formatted_uses = "<ul>" + "".join([f"<li>{use.strip()}</li>" for use in uses]) + "</ul>"
-    return formatted_uses
-
-def get_scientific_classification(plant_name):
-    # Add a dictionary for scientific names (you can expand this)
-    scientific_names = {
-        "Aloevera": "Aloe barbadensis miller",
-        "Tulasi": "Ocimum tenuiflorum",
-        # Add more scientific names
-    }
-    return scientific_names.get(plant_name, "Scientific name not available")
-
-def get_common_names(plant_name):
-    # Add a dictionary for common names (you can expand this)
-    common_names = {
-        "Aloevera": "Aloe Vera, Burn Plant, Medicinal Aloe",
-        "Tulasi": "Holy Basil, Sacred Basil, Thai Basil",
-        # Add more common names
-    }
-    return common_names.get(plant_name, "Common names not available")
-
-def get_native_region(plant_name):
-    # Add a dictionary for native regions (you can expand this)
-    native_regions = {
-        "Aloevera": "Northern Africa",
-        "Tulasi": "Indian Subcontinent",
-        # Add more native regions
-    }
-    return native_regions.get(plant_name, "Native region information not available")
-
 def main():
     # Load CSS
     load_css()
@@ -884,9 +729,11 @@ def main():
                         <h3 class="info-title">💊 Medicinal Uses</h3>
                 """, unsafe_allow_html=True)
                 uses = use_of_medicine.get(predicted_class, "No information available")
-                uses = uses.strip("{}").split(",")
-                for use in uses:
-                    st.markdown(f"• {use.strip()}")
+                if isinstance(uses, list):
+                    for use in uses:
+                        st.markdown(f"• {use}")
+                else:
+                    st.markdown(f"• {uses}")
                 st.markdown("</div>", unsafe_allow_html=True)
             st.markdown('</div>', unsafe_allow_html=True)
         else:
@@ -896,35 +743,7 @@ def main():
                     <p style="color: #6b7280;">Upload an image to see the analysis</p>
                 </div>
             """, unsafe_allow_html=True)
-    # Initialize variables
-    predicted_class = None
-    confidence = None
 
-    # Load the model
-    model = load_prediction_model()
-    if model is None:
-        return
-
-    # Your app logic goes here
-    st.title("PlantAI - Medicinal Plant Identifier")
-
-    # Example: Handling user input
-    user_input = st.text_input("Enter details for plant classification:")
-
-    if user_input:
-        # Assuming you have a function `predict` to make predictions using the model
-        try:
-            predicted_class, confidence = predict(user_input, model)  # Replace with your actual prediction logic
-            st.success(f"Prediction: {predicted_class} with confidence {confidence:.2f}")
-        except Exception as e:
-            st.error(f"Error during prediction: {str(e)}")
-
-    # Check if prediction results are available and display them
-    if predicted_class and not st.session_state.get('loading', False):
-        display_enhanced_results(predicted_class, confidence)  # Make sure `display_enhanced_results` is defined
-
-    # Add additional features or chatbots
-    add_enhanced_chatbot()  # Ensure `add_enhanced_chatbot` is defined
     # About section with enhanced animation
     st.markdown("""
         <div class="glass-card">
