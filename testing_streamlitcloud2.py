@@ -704,7 +704,7 @@ def predict_class(img):
                 </script>
             """, unsafe_allow_html=True)
     with col2:
-    if uploaded_file:
+        if uploaded_file:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
         # Loading Spinner
