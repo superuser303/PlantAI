@@ -411,7 +411,40 @@ def load_css():
         border-radius: 0 0 0.5rem 0.5rem;
         margin-top: 0.25rem;
     }
+            .chat-container {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        margin: 1rem 0;
+        overflow: hidden;
+    }
     
+    .chat-header {
+        background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+        padding: 1rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+    
+    .chat-header:hover {
+        background: linear-gradient(135deg, #065f46 0%, #05875f 100%);
+    }
+    
+    .chat-body {
+        padding: 1rem;
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    
+    .chat-input {
+        background: #f3f4f6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin: 1rem;
+    }
     
     /* Animated Confidence Bar Styles */
     .confidence-container {
