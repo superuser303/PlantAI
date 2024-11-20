@@ -521,67 +521,7 @@ def load_css():
     .confidence-fill.low {
         background: linear-gradient(90deg, #f59e0b, #d97706);
     }
-    .loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(5, 150, 105, 0.05);
-    border-radius: 10px;
-}
-
-.loading-spinner {
-    width: 60px;
-    height: 60px;
-    border: 5px solid rgba(5, 150, 105, 0.2);
-    border-top: 5px solid #059669;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-    margin-top: 15px;
-    color: #065f46;
-    font-weight: 600;
-    text-align: center;
-}
-
-.loading-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(255, 255, 255, 0.8);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 1000;
-    animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
-
-.loading-overlay .loading-spinner {
-    width: 80px;
-    height: 80px;
-    border-width: 6px;
-}
-
-.loading-overlay .loading-text {
-    margin-top: 20px;
-    font-size: 1.2rem;
-}          
+              
     </style>
                 
     """, unsafe_allow_html=True)    
@@ -845,3 +785,4 @@ with col2:
 
 if __name__ == "__main__":
     main()
+
