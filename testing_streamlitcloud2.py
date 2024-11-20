@@ -573,7 +573,7 @@ def predict_class(img):
         
     def main():
     # Load CSS
-    load_css()
+        load_css()
     
     # Header with enhanced animation, slogan, and modernized team members
     st.markdown("""
