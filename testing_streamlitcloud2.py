@@ -446,6 +446,7 @@ def load_css():
         border-radius: 0 0 0.5rem 0.5rem;
         margin-top: 0.25rem;
     }
+    
     /* Animated Confidence Bar Styles */
     .confidence-container {
         margin: 1rem 0;
@@ -520,40 +521,69 @@ def load_css():
     .confidence-fill.low {
         background: linear-gradient(90deg, #f59e0b, #d97706);
     }
-     # Add this to your existing CSS in load_css() function
-    .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(5, 150, 105, 0.3);
-        border-top: 4px solid #059669;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-
-    .loading-text {
-        text-align: center;
-        color: #065f46;
-        margin-top: 15px;
-        font-weight: 600;
-    }
-
     .loading-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-        background: rgba(5, 150, 105, 0.05);
-        border-radius: 10px;
-}           
-    </style>
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 150, 105, 0.05);
+    border-radius: 10px;
+}
 
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(5, 150, 105, 0.2);
+    border-top: 5px solid #059669;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    margin-top: 15px;
+    color: #065f46;
+    font-weight: 600;
+    text-align: center;
+}
+
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.loading-overlay .loading-spinner {
+    width: 80px;
+    height: 80px;
+    border-width: 6px;
+}
+
+.loading-overlay .loading-text {
+    margin-top: 20px;
+    font-size: 1.2rem;
+}          
+    </style>
+                
     """, unsafe_allow_html=True)    
 # Load model with caching
 @st.cache_resource
@@ -575,6 +605,9 @@ def predict_class(img):
         # Set loading state to True at the start of prediction
         st.session_state['loading'] = True
         
+        # Optional: Add a slight delay to show loading spinner
+        time.sleep(1.5)
+        
         img = Image.open(img).convert('RGB')
         img = img.resize((256, 256))
         img_array = image.img_to_array(img)
@@ -585,9 +618,6 @@ def predict_class(img):
             st.session_state['model'] = load_prediction_model()
 
         if st.session_state['model'] is not None:
-            # Optional: Add a slight delay to show loading spinner
-            time.sleep(1.5)
-            
             predictions = st.session_state['model'].predict(img_array)
             predicted_class_index = np.argmax(predictions)
             confidence = float(predictions[0][predicted_class_index]) * 100
@@ -603,7 +633,7 @@ def predict_class(img):
         st.error(f"Error during prediction: {str(e)}")
         st.session_state['loading'] = False
         return None, None
-        
+            
 def main():
     # Load CSS
         load_css()
@@ -743,7 +773,7 @@ with col2:
         # Loading Spinner
         if st.session_state['loading']:
             st.markdown("""
-                <div class="loading-container">
+                <div class="loading-overlay">
                     <div class="loading-spinner"></div>
                     <div class="loading-text">Analyzing plant image...</div>
                 </div>
@@ -815,4 +845,3 @@ with col2:
 
 if __name__ == "__main__":
     main()
-
