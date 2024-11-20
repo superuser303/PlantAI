@@ -1,5 +1,6 @@
+import gdown
+import tensorflow as tf
 import streamlit as st
-import gdown 
 import numpy as np
 from tensorflow.keras.preprocessing import image
 from tensorflow.keras.models import load_model
@@ -531,8 +532,10 @@ def load_prediction_model():
         download_url = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"
         model_path = "Medicinal_Plant.h5"
         gdown.download(download_url, model_path, quiet=False)
-        model = (model_path)
+        model = tf.keras.models.load_model(model_path)
         return model
+        if not hasattr(model, 'predict'):
+            raise ValueError("Loaded object is not a valid Keras model")
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         return None
