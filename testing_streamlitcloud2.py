@@ -342,41 +342,6 @@ def load_css():
             font-size: 0.8rem;
             font-weight: 500;
         }
-        
-        .chat-container {
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        margin: 1rem 0;
-        overflow: hidden;
-    }
-    
-    .chat-header {
-        background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
-        padding: 1rem;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-    }
-    
-    .chat-header:hover {
-        background: linear-gradient(135deg, #065f46 0%, #05875f 100%);
-    }
-    
-    .chat-body {
-        padding: 1rem;
-        max-height: 400px;
-        overflow-y: auto;
-    }
-    
-    .chat-input {
-        background: #f3f4f6;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin: 1rem;
-    }
     
     /* Enhanced Results Section */
     .result-card {
@@ -446,6 +411,38 @@ def load_css():
         border-radius: 0 0 0.5rem 0.5rem;
         margin-top: 0.25rem;
     }
+    # Add this to your existing CSS in load_css() function
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(5, 150, 105, 0.3);
+    border-top: 4px solid #059669;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    text-align: center;
+    color: #065f46;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 150, 105, 0.05);
+    border-radius: 10px;
+}
     
     /* Animated Confidence Bar Styles */
     .confidence-container {
@@ -539,10 +536,12 @@ def load_prediction_model():
     except Exception as e:
         st.error(f"Error loading model: {str(e)}")
         return None
-
+        
 def predict_class(img):
     try:
+        # Set loading state to True at the start of prediction
         st.session_state['loading'] = True
+        
         img = Image.open(img).convert('RGB')
         img = img.resize((256, 256))
         img_array = image.img_to_array(img)
@@ -553,18 +552,26 @@ def predict_class(img):
             st.session_state['model'] = load_prediction_model()
 
         if st.session_state['model'] is not None:
-            time.sleep(1)
+            # Optional: Add a slight delay to show loading spinner
+            time.sleep(1.5)
+            
             predictions = st.session_state['model'].predict(img_array)
             predicted_class_index = np.argmax(predictions)
             confidence = float(predictions[0][predicted_class_index]) * 100
+            
+            # Set loading state to False after prediction
             st.session_state['loading'] = False
             return class_labels[predicted_class_index], confidence
+        
+        # If model loading fails
+        st.session_state['loading'] = False
         return None, None
     except Exception as e:
         st.error(f"Error during prediction: {str(e)}")
         st.session_state['loading'] = False
         return None, None
-def main():
+        
+    def main():
     # Load CSS
     load_css()
     
@@ -697,15 +704,17 @@ def main():
                 </script>
             """, unsafe_allow_html=True)
     with col2:
-        if uploaded_file:
-            st.markdown('<div class="glass-card">', unsafe_allow_html=True)
-            if st.session_state['loading']:
-                st.markdown("""
-                    <div class="loading-container">
-                        <div class="loading-spinner"></div>
-                        <div class="loading-text">Analyzing plant image...</div>
-                    </div>
-                """, unsafe_allow_html=True)
+    if uploaded_file:
+        st.markdown('<div class="glass-card">', unsafe_allow_html=True)
+        
+        # Loading Spinner
+        if st.session_state['loading']:
+            st.markdown("""
+                <div class="loading-container">
+                    <div class="loading-spinner"></div>
+                    <div class="loading-text">Analyzing plant image...</div>
+                </div>
+            """, unsafe_allow_html=True)    
             
             predicted_class, confidence = predict_class(uploaded_file)
             
