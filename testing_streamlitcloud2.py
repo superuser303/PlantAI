@@ -343,75 +343,7 @@ def load_css():
             font-weight: 500;
         }
     
-    /* Enhanced Results Section */
-    .result-card {
-        background: white;
-        border-radius: 1rem;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        padding: 1.5rem;
-        margin: 1rem 0;
-    }
-    
-    .result-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
-    }
-    
-    .confidence-meter {
-        background: #e5e7eb;
-        height: 8px;
-        border-radius: 4px;
-        overflow: hidden;
-        margin: 0.5rem 0;
-    }
-    
-    .confidence-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #059669 0%, #064e3b 100%);
-        transition: width 0.5s ease;
-    }
-    
-    .property-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1rem;
-        margin-top: 1rem;
-    }
-    
-    .property-card {
-        background: #f3f4f6;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        transition: transform 0.2s ease;
-    }
-    
-    .property-card:hover {
-        transform: translateY(-2px);
-    }
-    
-    .expandable-section {
-        margin-top: 1rem;
-    }
-    
-    .expandable-header {
-        background: #f3f4f6;
-        padding: 0.75rem;
-        border-radius: 0.5rem;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-    
-    .expandable-content {
-        padding: 1rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0 0 0.5rem 0.5rem;
-        margin-top: 0.25rem;
-    }
-            .chat-container {
+        .chat-container {
         background: white;
         border-radius: 1rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -419,7 +351,7 @@ def load_css():
         overflow: hidden;
     }
     
-    .chat-header {
+        .chat-header {
         background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
         padding: 1rem;
         color: white;
@@ -429,21 +361,123 @@ def load_css():
         cursor: pointer;
     }
     
-    .chat-header:hover {
+        .chat-header:hover {
         background: linear-gradient(135deg, #065f46 0%, #05875f 100%);
     }
     
-    .chat-body {
+        .chat-body {
         padding: 1rem;
         max-height: 400px;
         overflow-y: auto;
     }
     
-    .chat-input {
+        .chat-input {
         background: #f3f4f6;
         border-radius: 0.5rem;
         padding: 1rem;
         margin: 1rem;
+    }
+    
+    
+    /* Enhanced Results Section */
+        .result-card {
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+        margin: 1rem 0;
+    }
+    
+        .result-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
+        .confidence-meter {
+        background: #e5e7eb;
+        height: 8px;
+        border-radius: 4px;
+        overflow: hidden;
+        margin: 0.5rem 0;
+    }
+    
+        .confidence-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #059669 0%, #064e3b 100%);
+        transition: width 0.5s ease;
+    }
+    
+        .property-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    
+        .property-card {
+        background: #f3f4f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: transform 0.2s ease;
+    }
+    
+        .property-card:hover {
+        transform: translateY(-2px);
+    }
+    
+        .expandable-section {
+        margin-top: 1rem;
+    }
+    
+        .expandable-header {
+        background: #f3f4f6;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+        .expandable-content {
+        padding: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 0 0 0.5rem 0.5rem;
+        margin-top: 0.25rem;
+    }
+    # Add this to your existing CSS in load_css() function
+        .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(5, 150, 105, 0.3);
+        border-top: 4px solid #059669;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+        .loading-text {
+        text-align: center;
+        color: #065f46;
+        margin-top: 15px;
+        font-weight: 600;
+    }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: rgba(5, 150, 105, 0.05);
+            border-radius: 10px;
     }
     
     /* Animated Confidence Bar Styles */
@@ -520,38 +554,6 @@ def load_css():
     .confidence-fill.low {
         background: linear-gradient(90deg, #f59e0b, #d97706);
     }
-    # Add this to your existing CSS in load_css() function
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(5, 150, 105, 0.3);
-    border-top: 4px solid #059669;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-    text-align: center;
-    color: #065f46;
-    margin-top: 15px;
-    font-weight: 600;
-}
-
-.loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(5, 150, 105, 0.05);
-    border-radius: 10px;
-}
     </style>
 
     """, unsafe_allow_html=True)
@@ -605,7 +607,7 @@ def predict_class(img):
         st.session_state['loading'] = False
         return None, None
         
-    def main():
+def main():
     # Load CSS
         load_css()
     
@@ -627,7 +629,7 @@ def predict_class(img):
             </div>
         </div>
     """, unsafe_allow_html=True)
-    st.markdown("""
+        st.markdown("""
     <div class="team-section">
         <h4 style="color: #065f46; margin: 0 0 0.5rem 0;">Project Team</h4>
         <div class="team-grid">
@@ -663,9 +665,9 @@ def predict_class(img):
     </div>
 """, unsafe_allow_html=True)
 
-    col1, col2 = st.columns([3, 2])
+col1, col2 = st.columns([3, 2])
     
-    with col1:
+with col1:
         st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
         uploaded_file = st.file_uploader(
@@ -737,7 +739,7 @@ def predict_class(img):
                     }
                 </script>
             """, unsafe_allow_html=True)
-    with col2:
+with col2:
         if uploaded_file:
             st.markdown('<div class="glass-card">', unsafe_allow_html=True)
         
@@ -795,7 +797,7 @@ def predict_class(img):
             """, unsafe_allow_html=True)
 
     # About section with enhanced animation
-    st.markdown("""
+        st.markdown("""
         <div class="glass-card">
             <h3 style="color: #064e3b; margin-bottom: 1rem;">About MediPlant AI</h3>
             <p style="color: #374151; line-height: 1.6;">
