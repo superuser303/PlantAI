@@ -530,7 +530,7 @@ def load_prediction_model():
     try:
         download_url = "https://drive.google.com/uc?id=17xebXPPkKbQYJjAE0qyxikUjoUY6BNoz"
         model_path = "Medicinal_Plant.h5"
-        gdown.download(download_url, model_path, quite=False)
+        gdown.download(download_url, model_path, quiet=False)
         model = tf.keras.models.load_model(model_path)
         return model
     except Exception as e:
