@@ -576,7 +576,7 @@ def predict_class(img):
         load_css()
     
     # Header with enhanced animation, slogan, and modernized team members
-    st.markdown("""
+        st.markdown("""
         <div class="header-container">
             <h1 class="main-title">🌿 MediPlant AI</h1>
             <p class="subtitle" style="color: #065f46; font-size: 1.2rem; margin-bottom: 1rem;">
