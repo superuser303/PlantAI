@@ -342,7 +342,7 @@ def load_css():
             font-size: 0.8rem;
             font-weight: 500;
         }
-    
+        
         .chat-container {
         background: white;
         border-radius: 1rem;
@@ -351,7 +351,7 @@ def load_css():
         overflow: hidden;
     }
     
-        .chat-header {
+    .chat-header {
         background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
         padding: 1rem;
         color: white;
@@ -361,26 +361,25 @@ def load_css():
         cursor: pointer;
     }
     
-        .chat-header:hover {
+    .chat-header:hover {
         background: linear-gradient(135deg, #065f46 0%, #05875f 100%);
     }
     
-        .chat-body {
+    .chat-body {
         padding: 1rem;
         max-height: 400px;
         overflow-y: auto;
     }
     
-        .chat-input {
+    .chat-input {
         background: #f3f4f6;
         border-radius: 0.5rem;
         padding: 1rem;
         margin: 1rem;
     }
     
-    
     /* Enhanced Results Section */
-        .result-card {
+    .result-card {
         background: white;
         border-radius: 1rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -388,14 +387,14 @@ def load_css():
         margin: 1rem 0;
     }
     
-        .result-header {
+    .result-header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         margin-bottom: 1rem;
     }
     
-        .confidence-meter {
+    .confidence-meter {
         background: #e5e7eb;
         height: 8px;
         border-radius: 4px;
@@ -403,35 +402,35 @@ def load_css():
         margin: 0.5rem 0;
     }
     
-        .confidence-fill {
+    .confidence-fill {
         height: 100%;
         background: linear-gradient(90deg, #059669 0%, #064e3b 100%);
         transition: width 0.5s ease;
     }
     
-        .property-grid {
+    .property-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         gap: 1rem;
         margin-top: 1rem;
     }
     
-        .property-card {
+    .property-card {
         background: #f3f4f6;
         padding: 1rem;
         border-radius: 0.5rem;
         transition: transform 0.2s ease;
     }
     
-        .property-card:hover {
+    .property-card:hover {
         transform: translateY(-2px);
     }
     
-        .expandable-section {
+    .expandable-section {
         margin-top: 1rem;
     }
     
-        .expandable-header {
+    .expandable-header {
         background: #f3f4f6;
         padding: 0.75rem;
         border-radius: 0.5rem;
@@ -441,44 +440,44 @@ def load_css():
         justify-content: space-between;
     }
     
-        .expandable-content {
+    .expandable-content {
         padding: 1rem;
         border: 1px solid #e5e7eb;
         border-radius: 0 0 0.5rem 0.5rem;
         margin-top: 0.25rem;
     }
     # Add this to your existing CSS in load_css() function
-        .loading-spinner {
-        width: 50px;
-        height: 50px;
-        border: 4px solid rgba(5, 150, 105, 0.3);
-        border-top: 4px solid #059669;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-        margin: 20px auto;
-    }
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(5, 150, 105, 0.3);
+    border-top: 4px solid #059669;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
 
-        @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 
-        .loading-text {
-        text-align: center;
-        color: #065f46;
-        margin-top: 15px;
-        font-weight: 600;
-    }
+.loading-text {
+    text-align: center;
+    color: #065f46;
+    margin-top: 15px;
+    font-weight: 600;
+}
 
-        .loading-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(5, 150, 105, 0.05);
-            border-radius: 10px;
-    }
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 150, 105, 0.05);
+    border-radius: 10px;
+}
     
     /* Animated Confidence Bar Styles */
     .confidence-container {
@@ -556,8 +555,7 @@ def load_css():
     }
     </style>
 
-    """, unsafe_allow_html=True)
-    
+    """, unsafe_allow_html=True)    
 # Load model with caching
 @st.cache_resource
 def load_prediction_model():
