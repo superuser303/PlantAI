@@ -411,38 +411,7 @@ def load_css():
         border-radius: 0 0 0.5rem 0.5rem;
         margin-top: 0.25rem;
     }
-    # Add this to your existing CSS in load_css() function
-.loading-spinner {
-    width: 50px;
-    height: 50px;
-    border: 4px solid rgba(5, 150, 105, 0.3);
-    border-top: 4px solid #059669;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: 20px auto;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-.loading-text {
-    text-align: center;
-    color: #065f46;
-    margin-top: 15px;
-    font-weight: 600;
-}
-
-.loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: rgba(5, 150, 105, 0.05);
-    border-radius: 10px;
-}
+    
     
     /* Animated Confidence Bar Styles */
     .confidence-container {
@@ -518,6 +487,38 @@ def load_css():
     .confidence-fill.low {
         background: linear-gradient(90deg, #f59e0b, #d97706);
     }
+    # Add this to your existing CSS in load_css() function
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(5, 150, 105, 0.3);
+    border-top: 4px solid #059669;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 20px auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    text-align: center;
+    color: #065f46;
+    margin-top: 15px;
+    font-weight: 600;
+}
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(5, 150, 105, 0.05);
+    border-radius: 10px;
+}
     </style>
 
     """, unsafe_allow_html=True)
