@@ -42,10 +42,10 @@ PlantAI is a machine learning project designed to identify plants based on their
 
 ### Project Structure
 
-Streamlit2_app.py: Main Streamlit application script.
-train.py: Script to train the machine learning model.
-test.py: Testing script for model validation.
-requirements.txt: Lists the dependencies for the project.
+1. Streamlit2_app.py: Main Streamlit application script.
+2. train.py: Script to train the machine learning model.
+3. test.py: Testing script for model validation.
+4. requirements.txt: Lists the dependencies for the project.
 
 ### Deployment
 The app can be deployed using Streamlit Cloud for free. Follow the official Streamlit deployment guide to set it up.
