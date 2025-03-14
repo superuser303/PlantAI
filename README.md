@@ -33,8 +33,8 @@ Try PlantAI101 instantly in your browser:
 1.  **Clone the Repository:**
 
     ```bash
-    git clone [https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git](https://www.google.com/search?q=https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME.git)
-    cd YOUR_REPO_NAME
+    git clone [https://github.com/superuser303/PlantAI.git](https://www.google.com/search?q=https://github.com/superuser303/PlantAI.git)
+    cd PlantAI
     ```
 
 2.  **Install Dependencies:**
@@ -47,10 +47,8 @@ Try PlantAI101 instantly in your browser:
 3.  **Launch the Application:**
 
     ```bash
-    streamlit run your_main_app_file.py
+    streamlit Streamlit2.py 
     ```
-
-    (Replace `your_main_app_file.py` with your main script's filename.)
 
 ## 📦 Dependencies
 
