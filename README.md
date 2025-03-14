@@ -61,7 +61,6 @@ Experience PlantAI101 directly in your browser:
 * `scikit-learn`
 * `tensorflow` or `torch`
 * `gdown` (for downloading model weights)
-* (Add any other specific libraries)
 
 ## ☁️ Cloud Deployment
 
