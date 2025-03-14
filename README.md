@@ -5,7 +5,7 @@
 [![Streamlit App](https://img.shields.io/badge/Live%20Demo-PlantAI101-brightgreen?style=for-the-badge)](https://plantai101.streamlit.app/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.8+-blueviolet?style=for-the-badge)](https://www.python.org/downloads/)
-[![Stars](https://img.shields.io/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=social)](/YOUR_REPO_NAME/stargazers)
+[![Stars](https://img.shields.io/github/stars/YOUR_GITHUB_USERNAME/YOUR_REPO_NAME?style=social)](https://github.com/superuser303/PlantAI)
 
 **PlantAI101** leverages cutting-edge machine learning to identify medicinal plants from images, empowering you to explore the world of natural remedies. Simply upload a picture, and let AI reveal the plant's secrets!
 
