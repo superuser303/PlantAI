@@ -33,7 +33,7 @@ Try PlantAI101 instantly in your browser:
 1.  **Clone the Repository:**
 
     ```bash
-    git clone [https://github.com/superuser303/PlantAI.git](https://www.google.com/search?q=https://github.com/superuser303/PlantAI.git)
+    git clone [https://github.com/superuser303/PlantAI.git]
     cd PlantAI
     ```
 
@@ -42,7 +42,6 @@ Try PlantAI101 instantly in your browser:
     ```bash
     pip install -r requirements.txt
     ```
-    (Generate `requirements.txt` using `pip freeze > requirements.txt`)
 
 3.  **Launch the Application:**
 
